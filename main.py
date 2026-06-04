@@ -53,3 +53,15 @@ async def complete_task(task_id:int):
         return task
 
     raise HTTPException(status_code=404, detail="Task Not Found")
+
+#Fetching title by path parameter
+#@app.get("/title")
+
+
+@app.get("/Search_task/")
+async def read_items(q: str | None = None):
+    for task in tasks:
+        if task["Title"]==q:
+            return {"Message":f"Title: {task['Title']} exists"}
+    raise HTTPException(status_code=404, detail="Task Not Found")
+        
