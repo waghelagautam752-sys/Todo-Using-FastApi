@@ -63,5 +63,5 @@ async def read_items(q: str | None = None):
     for task in tasks:
         if task["Title"]==q:
             return {"Message":f"Title: {task['Title']} exists"}
-    raise HTTPException(status_code=404, detail="Task Not Found")
+    raise HTTPException(status_code=404, detail="Task Not Found", headers={"X-Error": "There goes my error"},)
         
