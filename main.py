@@ -11,7 +11,24 @@ class Create_task(BaseModel):
     Title:str
     Status:bool=False
 
-@app.post("/Create_task/")
+    """
+    Without tags:
+    GET /users/
+    POST /users/
+    GET /items/
+    POST /items/
+
+    With tags:
+    ▼ users
+    GET /users/
+    POST /users/
+
+    ▼ items
+    GET /items/
+    POST /items/
+    """
+
+@app.post("/Create_task/", tags=["Creating task"])
 async def create_task(task:Create_task):
     global nextid
 
@@ -25,11 +42,11 @@ async def create_task(task:Create_task):
 
     return new_task
 
-@app.get("/Gettask")
+@app.get("/Gettask",tags=["Get task"])
 async def get_task():
     return tasks
 
-@app.get("/gettask/{task_id}")
+@app.get("/gettask/{task_id}",tags=["Get task"])
 async def gettast(task_id:int):
     for task in tasks:
         if task["Id"]==task_id:
@@ -37,7 +54,7 @@ async def gettast(task_id:int):
                                     #Resource not found
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,detail="Task Not Found")
 
-@app.delete("/deletetask/{task_id}")
+@app.delete("/deletetask/{task_id}",tags=["Delete Task"])
 async def del_task(task_id:int):
     for task in tasks:
         if task["Id"]==task_id:
@@ -46,7 +63,7 @@ async def del_task(task_id:int):
                                 #Resource not found    
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,detail="Task Not Found")
 
-@app.patch("/task/{task_id}/completed")
+@app.patch("/task/{task_id}/completed" ,tags=["Status"])
 async def complete_task(task_id:int):
     for task in tasks:
         task["Id"]==task_id
@@ -59,7 +76,7 @@ async def complete_task(task_id:int):
 #@app.get("/title")
 
 
-@app.get("/Search_task/")
+@app.get("/Search_task/",tags=["Search Task"])
 async def read_items(q: str | None = None):
     for task in tasks:
         if task["Title"]==q:
