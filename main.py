@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI,HTTPException,status
 from pydantic import BaseModel
 
 
@@ -34,8 +34,8 @@ async def gettast(task_id:int):
     for task in tasks:
         if task["Id"]==task_id:
             return task
-    
-    raise HTTPException(status_code=404 ,detail="Task Not Found")
+                                    #Resource not found
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,detail="Task Not Found")
 
 @app.delete("/deletetask/{task_id}")
 async def del_task(task_id:int):
@@ -43,7 +43,8 @@ async def del_task(task_id:int):
         if task["Id"]==task_id:
             tasks.remove(task)
             return {"message": "Task deleted"}
-    raise HTTPException(status_code=404 ,detail="Task Not Found")
+                                #Resource not found    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,detail="Task Not Found")
 
 @app.patch("/task/{task_id}/completed")
 async def complete_task(task_id:int):
@@ -51,8 +52,8 @@ async def complete_task(task_id:int):
         task["Id"]==task_id
         task["Completed"]=True
         return task
-
-    raise HTTPException(status_code=404, detail="Task Not Found")
+                                    #Resource not found 
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task Not Found")
 
 #Fetching title by path parameter
 #@app.get("/title")
@@ -63,5 +64,6 @@ async def read_items(q: str | None = None):
     for task in tasks:
         if task["Title"]==q:
             return {"Message":f"Title: {task['Title']} exists"}
-    raise HTTPException(status_code=404, detail="Task Not Found", headers={"X-Error": "There goes my error"},)
+                                    #Resource not found 
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task Not Found", headers={"X-Error": "There goes my error"},)
         
