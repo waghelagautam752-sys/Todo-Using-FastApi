@@ -6,10 +6,15 @@ app=FastAPI()
 
 tasks =[]
 nextid=1
-class Create_task(BaseModel):
+class Create_task_in(BaseModel):
     #Id:int
     Title:str
-    Status:bool=False
+    secret_code:str
+
+class Create_task_out(BaseModel):
+    Id:int
+    Title:str
+    Completed:bool = False
 
     """
     Without tags:
@@ -28,14 +33,14 @@ class Create_task(BaseModel):
     POST /items/
     """
 
-@app.post("/Create_task/", tags=["Creating task"])
-async def create_task(task:Create_task):
+@app.post("/Create_task/", tags=["Creating task"],response_model=Create_task_out)
+async def create_task(task:Create_task_in):
     global nextid
 
     new_task={
         "Id":nextid,
         "Title":task.Title,
-        "Completed":task.Status
+        "Completed":False
     }
     tasks.append(new_task)
     nextid+=1
@@ -66,8 +71,8 @@ async def del_task(task_id:int):
 @app.patch("/task/{task_id}/completed" ,tags=["Status"])
 async def complete_task(task_id:int):
     for task in tasks:
-        task["Id"]==task_id
-        task["Completed"]=True
+        if task["Id"]==task_id:
+            task["Completed"]=True
         return task
                                     #Resource not found 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task Not Found")
