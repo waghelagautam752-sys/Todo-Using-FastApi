@@ -47,11 +47,11 @@ async def create_task(task:Create_task_in):
 
     return new_task
 
-@app.get("/Gettask",tags=["Get task"])
+@app.get("/Gettask",tags=["Get task"],response_model=list[Create_task_out])
 async def get_task():
     return tasks
 
-@app.get("/gettask/{task_id}",tags=["Get task"])
+@app.get("/gettask/{task_id}",tags=["Get task"],response_model=Create_task_out)
 async def gettast(task_id:int):
     for task in tasks:
         if task["Id"]==task_id:
@@ -73,7 +73,7 @@ async def complete_task(task_id:int):
     for task in tasks:
         if task["Id"]==task_id:
             task["Completed"]=True
-        return task
+            return task
                                     #Resource not found 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task Not Found")
 
@@ -89,3 +89,19 @@ async def read_items(q: str | None = None):
                                     #Resource not found 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task Not Found", headers={"X-Error": "There goes my error"},)
         
+
+#Replacing the Entire Task except Id and secret code
+
+class put_update_task(BaseModel):
+    Title:str
+    Completed:bool
+
+@app.put("/task/{task_id}")
+async def put_task(task_id:int,put_task:put_update_task):
+    for task in tasks:
+        if task["Id"]==task_id:
+            task["Title"]=put_task.Title
+            task["Completed"]=put_task.Completed
+            return task
+        
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found", headers={"X-Error": "There goes my error"},)
